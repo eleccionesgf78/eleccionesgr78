@@ -5,7 +5,7 @@ import random
 st.set_page_config(page_title="Sorteo", page_icon="🎁")
 
 # ---------------------- ENCABEZADO ----------------------
-col1, col2 = st.columns([1, 3])  # Imagen chica - texto grande
+col1, col2 = st.columns([1, 2])  # Imagen chica - texto grande
 
 with col1:
     # Asegurate de que el archivo esté en la misma carpeta que app.py
