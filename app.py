@@ -2,73 +2,45 @@ import streamlit as st
 import pandas as pd
 import random
 
-st.set_page_config(page_title="Sorteo", page_icon="🎁")
+# Configuración
+st.set_page_config(page_title="Sorteo", page_icon="🎉")
 
-# ---------------------- ENCABEZADO ----------------------
-st.image("http://uthgraneuquen.org.ar/?p=4214", width=180)  # ⚠️ Necesita URL directa de imagen
-st.title("SORTEO POR UNA NAVIDAD FELIZ ES CON MINGO 2026")
+# Mostrar el LOGO arriba del título
+st.image("LOGO_PJ_TERMAS.jpg", width=350)  # ajustá el tamaño si querés
+
+st.title("Sistema de Sorteo con Excel (sin duplicados)")
 st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
-st.markdown("---")
 
-# ---------------------- CARGA DE ARCHIVO ----------------------
-archivo = st.file_uploader("Subir archivo Excel", type=["xlsx"])
+# Subir archivo
+uploaded_file = st.file_uploader("Subir archivo Excel", type=["xlsx"])
 
-if archivo:
-    try:
-        df = pd.read_excel(archivo)
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
 
-        # Validar si está vacío
-        if df.empty:
-            st.error("El archivo está vacío.")
-            st.stop()
+    # Validación de columnas
+    if "dni" not in df.columns or "nombre" not in df.columns:
+        st.error("El archivo debe tener columnas: dni y nombre.")
+    else:
+        # Eliminar duplicados por DNI
+        df = df.drop_duplicates(subset="dni")
 
-        # Validar columnas necesarias
-        columnas = [c.lower() for c in df.columns]
-        if "dni" not in columnas or "nombre" not in columnas:
-            st.error("El archivo debe tener columnas 'dni' y 'nombre'.")
-            st.stop()
+        st.write("### Vista previa de los datos:")
+        st.dataframe(df)
 
-        # Normalizar nombres de columnas
-        df.columns = [c.lower() for c in df.columns]
+        # Cantidad de ganadores
+        cantidad = st.number_input("Cantidad de ganadores", min_value=1, max_value=len(df), step=1)
 
-        # ---- PRE-LIMPIEZA ----
-        total_antes = len(df)
-        df = df.drop_duplicates(subset=["dni"], keep="first")
-        total_despues = len(df)
-        eliminados = total_antes - total_despues
+        if st.button("Realizar sorteo"):
+            ganadores = df.sample(n=cantidad)
+            st.success("🎉 ¡Sorteo realizado!")
+            st.write("### Ganadores:")
+            st.dataframe(ganadores)
 
-        if eliminados > 0:
-            st.warning(f"⚠️ Se eliminaron {eliminados} participantes con DNI duplicado.")
-        else:
-            st.success("No se encontraron DNIs duplicados.")
-
-        st.write(f"Participantes válidos: {total_despues}")
-        st.dataframe(df, use_container_width=True)
-
-        # Parámetros del sorteo
-        cant_ganadores = st.number_input(
-            "Cantidad de ganadores", min_value=1, max_value=len(df), value=1
-        )
-        cant_suplentes = st.number_input(
-            "Cantidad de suplentes",
-            min_value=0,
-            max_value=len(df) - cant_ganadores,
-            value=0
-        )
-
-        # Sorteo
-        if st.button("🎯 Realizar Sorteo"):
-            participantes = df.sample(frac=1).reset_index(drop=True)
-
-            ganadores = participantes.iloc[:cant_ganadores]
-            suplentes = participantes.iloc[cant_ganadores:cant_ganadores + cant_suplentes]
-
-            st.subheader("🎉 Ganadores")
-            st.table(ganadores)
-
-            if not suplentes.empty:
-                st.subheader("🟦 Suplentes")
-                st.table(suplentes)
-
-    except Exception as e:
-        st.error(f"Error al leer el archivo: {e}")
+            # Descargar resultados
+            ganadores_excel = ganadores.to_excel(index=False)
+            st.download_button(
+                label="Descargar ganadores",
+                data=ganadores.to_csv(index=False).encode("utf-8"),
+                file_name="ganadores.csv",
+                mime="text/csv",
+            )
