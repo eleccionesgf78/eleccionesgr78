@@ -2,11 +2,15 @@ import streamlit as st
 import pandas as pd
 import random
 
-st.set_page_config(page_title="Sorteo", page_icon="🎉")
+st.set_page_config(page_title="Sorteo", page_icon="🎁")
 
-st.title("🎉 SORTEO POR UNA NAVIDAD FELIZ ES CON MINGO")
+# ---------------------- ENCABEZADO ----------------------
+st.image("imagenes/peronismo.png", width=220)
+st.title("Sistema de Sorteo con Excel (sin duplicados)")
 st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
+st.markdown("---")
 
+# ---------------------- CARGA DE ARCHIVO ----------------------
 archivo = st.file_uploader("Subir archivo Excel", type=["xlsx"])
 
 if archivo:
@@ -54,7 +58,7 @@ if archivo:
 
         # Sorteo
         if st.button("🎯 Realizar Sorteo"):
-            participantes = df.sample(frac=1).reset_index(drop=True)  # shuffle seguro
+            participantes = df.sample(frac=1).reset_index(drop=True)
 
             ganadores = participantes.iloc[:cant_ganadores]
             suplentes = participantes.iloc[cant_ganadores:cant_ganadores + cant_suplentes]
@@ -66,13 +70,7 @@ if archivo:
                 st.subheader("🟦 Suplentes")
                 st.table(suplentes)
 
-            # Si querés descargar resultados (opcional)
-            #output = pd.ExcelWriter("resultado_sorteo.xlsx", engine="xlsxwriter")
-            #ganadores.to_excel(output, sheet_name="Ganadores", index=False)
-            #suplentes.to_excel(output, sheet_name="Suplentes", index=False)
-            #output.save()
-            #st.download_button("📥 Descargar resultados", data=open("resultado_sorteo.xlsx","rb"), file_name="sorteo.xlsx")
-
     except Exception as e:
         st.error(f"Error al leer el archivo: {e}")
+
 
