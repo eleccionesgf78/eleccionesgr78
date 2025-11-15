@@ -12,7 +12,7 @@ with col1:
     st.image("LOGO_PJ_TERMAS.jpg", width=180)
 
 with col2:
-    st.title("Sorteo extraordinario por una navidad feliz._______ MINGO 2026")
+    st.title("Sorteo solidario por una navidad feliz._______ MINGO 2026")
     st.write("Sujeto a la bases y condiciones.")
 
 st.markdown("---")
