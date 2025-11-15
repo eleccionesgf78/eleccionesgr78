@@ -5,7 +5,7 @@ import random
 st.set_page_config(page_title="Sorteo", page_icon="🎁")
 
 # ---------------------- ENCABEZADO ----------------------
-st.image("imagenes/PERONISMO.png", width=220)
+st.image("http://uthgraneuquen.org.ar/?p=4214", width=180)  # ⚠️ Necesita URL directa de imagen
 st.title("Sistema de Sorteo con Excel (sin duplicados)")
 st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
 st.markdown("---")
@@ -72,5 +72,3 @@ if archivo:
 
     except Exception as e:
         st.error(f"Error al leer el archivo: {e}")
-
-
