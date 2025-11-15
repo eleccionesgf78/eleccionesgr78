@@ -4,7 +4,7 @@ import random
 
 st.set_page_config(page_title="Sorteo", page_icon="🎉")
 
-st.title("🎉 Sistema de Sorteo con Excel (sin duplicados)")
+st.title("🎉 SORTEO POR UNA NAVIDAD FELIZ")
 st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
 
 archivo = st.file_uploader("Subir archivo Excel", type=["xlsx"])
