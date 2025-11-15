@@ -13,7 +13,7 @@ with col1:
 
 with col2:
     st.title("Sorteo extraordinario por una navidad feliz._______ MINGO 2026")
-    st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
+    st.write("Sujeto a la bases y condiciones.")
 
 st.markdown("---")
 
