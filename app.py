@@ -5,7 +5,7 @@ import random
 st.set_page_config(page_title="Sorteo", page_icon="🎁")
 
 # ---------------------- ENCABEZADO ----------------------
-st.image("imagenes/peronismo.png", width=220)
+st.image("imagenes/PERONISMO.png", width=220)
 st.title("Sistema de Sorteo con Excel (sin duplicados)")
 st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
 st.markdown("---")
