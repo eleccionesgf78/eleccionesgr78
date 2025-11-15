@@ -2,45 +2,81 @@ import streamlit as st
 import pandas as pd
 import random
 
-# Configuración
-st.set_page_config(page_title="Sorteo", page_icon="🎉")
+st.set_page_config(page_title="Sorteo", page_icon="🎁")
 
-# Mostrar el LOGO arriba del título
-st.image("LOGO_PJ_TERMAS.jpg", width=200)  # ajustá el tamaño si querés
+# ---------------------- ENCABEZADO ----------------------
+col1, col2 = st.columns([1, 3])  # Imagen chica - texto grande
 
-st.title("Sistema de Sorteo con Excel (sin duplicados)")
-st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
+with col1:
+    # Asegurate de que el archivo esté en la misma carpeta que app.py
+    st.image("LOGO_PJ_TERMAS.jpg", width=180)
 
-# Subir archivo
-uploaded_file = st.file_uploader("Subir archivo Excel", type=["xlsx"])
+with col2:
+    st.title("SORTEO POR UNA NAVIDAD FELIZ ES CON MINGO 2026")
+    st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
 
-if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
+st.markdown("---")
 
-    # Validación de columnas
-    if "dni" not in df.columns or "nombre" not in df.columns:
-        st.error("El archivo debe tener columnas: dni y nombre.")
-    else:
-        # Eliminar duplicados por DNI
-        df = df.drop_duplicates(subset="dni")
+# ---------------------- CARGA DE ARCHIVO ----------------------
+archivo = st.file_uploader("Subir archivo Excel", type=["xlsx"])
 
-        st.write("### Vista previa de los datos:")
-        st.dataframe(df)
+if archivo:
+    try:
+        df = pd.read_excel(archivo)
 
-        # Cantidad de ganadores
-        cantidad = st.number_input("Cantidad de ganadores", min_value=1, max_value=len(df), step=1)
+        # Validar si está vacío
+        if df.empty:
+            st.error("El archivo está vacío.")
+            st.stop()
 
-        if st.button("Realizar sorteo"):
-            ganadores = df.sample(n=cantidad)
-            st.success("🎉 ¡Sorteo realizado!")
-            st.write("### Ganadores:")
-            st.dataframe(ganadores)
+        # Validar columnas necesarias
+        columnas = [c.lower() for c in df.columns]
+        if "dni" not in columnas or "nombre" not in columnas:
+            st.error("El archivo debe tener columnas 'dni' y 'nombre'.")
+            st.stop()
 
-            # Descargar resultados
-            ganadores_excel = ganadores.to_excel(index=False)
-            st.download_button(
-                label="Descargar ganadores",
-                data=ganadores.to_csv(index=False).encode("utf-8"),
-                file_name="ganadores.csv",
-                mime="text/csv",
-            )
+        # Normalizar nombres de columnas
+        df.columns = [c.lower() for c in df.columns]
+
+        # ---- PRE-LIMPIEZA ----
+        total_antes = len(df)
+        df = df.drop_duplicates(subset=["dni"], keep="first")
+        total_despues = len(df)
+        eliminados = total_antes - total_despues
+
+        if eliminados > 0:
+            st.warning(f"⚠️ Se eliminaron {eliminados} participantes con DNI duplicado.")
+        else:
+            st.success("No se encontraron DNIs duplicados.")
+
+        st.write(f"Participantes válidos: {total_despues}")
+        st.dataframe(df, use_container_width=True)
+
+        # Parámetros del sorteo
+        cant_ganadores = st.number_input(
+            "Cantidad de ganadores", min_value=1, max_value=len(df), value=1
+        )
+        cant_suplentes = st.number_input(
+            "Cantidad de suplentes",
+            min_value=0,
+            max_value=len(df) - cant_ganadores,
+            value=0
+        )
+
+        # Sorteo
+        if st.button("🎯 Realizar Sorteo"):
+            participantes = df.sample(frac=1).reset_index(drop=True)
+
+            ganadores = participantes.iloc[:cant_ganadores]
+            suplentes = participantes.iloc[cant_ganadores:cant_ganadores + cant_suplentes]
+
+            st.subheader("🎉 Ganadores")
+            st.table(ganadores)
+
+            if not suplentes.empty:
+                st.subheader("🟦 Suplentes")
+                st.table(suplentes)
+
+    except Exception as e:
+        st.error(f"Error al leer el archivo: {e}")
+
