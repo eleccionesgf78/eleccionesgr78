@@ -6,7 +6,7 @@ import random
 st.set_page_config(page_title="Sorteo", page_icon="🎉")
 
 # Mostrar el LOGO arriba del título
-st.image("LOGO_PJ_TERMAS.jpg", width=350)  # ajustá el tamaño si querés
+st.image("LOGO_PJ_TERMAS.jpg", width=35)  # ajustá el tamaño si querés
 
 st.title("Sistema de Sorteo con Excel (sin duplicados)")
 st.write("Subí un archivo Excel con columnas **dni** y **nombre** para realizar el sorteo.")
