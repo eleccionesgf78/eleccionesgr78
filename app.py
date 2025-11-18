@@ -106,26 +106,58 @@ archivo = st.file_uploader(
 
 if archivo:
     try:
+        # Cargar el archivo Excel
         df = pd.read_excel(archivo)
+        
+        # Mostrar información del archivo cargado
+        st.success(f"✅ Archivo cargado correctamente")
+        st.info(f"📊 Columnas detectadas: {list(df.columns)}")
+        st.info(f"📝 Total de registros: {len(df)}")
 
         # Validar si está vacío
         if df.empty:
             st.error("❌ El archivo está vacío.")
             st.stop()
 
-        # Validar columnas necesarias
-        columnas = [c.lower() for c in df.columns]
-        if "dni" not in columnas or "nombre" not in columnas:
-            st.error("❌ El archivo debe tener columnas 'DNI' y 'Nombre'.")
+        # Buscar columnas que contengan "dni" y "nombre" (case insensitive)
+        columnas = [str(col).lower().strip() for col in df.columns]
+        
+        # Encontrar nombres reales de las columnas
+        columna_dni = None
+        columna_nombre = None
+        
+        for col in df.columns:
+            col_lower = str(col).lower().strip()
+            if 'dni' in col_lower:
+                columna_dni = col
+            if 'nombre' in col_lower:
+                columna_nombre = col
+
+        # Validar que se encontraron las columnas necesarias
+        if not columna_dni or not columna_nombre:
+            st.error(f"❌ No se pudieron encontrar las columnas necesarias.")
+            st.error(f"Columnas disponibles: {list(df.columns)}")
+            st.error("El archivo debe tener una columna con 'DNI' y otra con 'Nombre'")
             st.stop()
 
-        # Normalizar nombres de columnas
-        df.columns = [c.lower() for c in df.columns]
+        st.success(f"✅ Columnas identificadas: '{columna_dni}' y '{columna_nombre}'")
+
+        # Crear un nuevo DataFrame solo con las columnas necesarias
+        df_sorteo = df[[columna_dni, columna_nombre]].copy()
+        
+        # Renombrar columnas para consistencia
+        df_sorteo.columns = ['dni', 'nombre']
+        
+        # Limpiar datos - eliminar filas con valores vacíos
+        df_sorteo = df_sorteo.dropna()
+        
+        # Convertir DNI a string y limpiar
+        df_sorteo['dni'] = df_sorteo['dni'].astype(str).str.strip()
 
         # ---- PRE-LIMPIEZA ----
-        total_antes = len(df)
-        df = df.drop_duplicates(subset=["dni"], keep="first")
-        total_despues = len(df)
+        total_antes = len(df_sorteo)
+        df_sorteo = df_sorteo.drop_duplicates(subset=["dni"], keep="first")
+        total_despues = len(df_sorteo)
         eliminados = total_antes - total_despues
 
         if eliminados > 0:
@@ -136,7 +168,7 @@ if archivo:
         st.markdown(f"<p style='color: #000000;'>🎅 Participantes válidos para el sorteo: <strong>{total_despues}</strong></p>", unsafe_allow_html=True)
         
         with st.expander("📋 Ver lista completa de participantes"):
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df_sorteo, use_container_width=True)
 
         # Parámetros del sorteo
         col1, col2 = st.columns(2)
@@ -145,7 +177,7 @@ if archivo:
             cant_ganadores = st.number_input(
                 "🎁 Cantidad de ganadores", 
                 min_value=1, 
-                max_value=len(df), 
+                max_value=len(df_sorteo), 
                 value=1,
                 help="Número de ganadores principales"
             )
@@ -154,7 +186,7 @@ if archivo:
             cant_suplentes = st.number_input(
                 "🟦 Cantidad de suplentes",
                 min_value=0,
-                max_value=len(df) - cant_ganadores,
+                max_value=len(df_sorteo) - cant_ganadores,
                 value=0,
                 help="Ganadores suplentes en caso de que los principales no puedan recibir el premio"
             )
@@ -184,7 +216,7 @@ if archivo:
             time.sleep(0.5)
 
             # Realizar el sorteo
-            participantes = df.sample(frac=1).reset_index(drop=True)
+            participantes = df_sorteo.sample(frac=1).reset_index(drop=True)
             ganadores = participantes.iloc[:cant_ganadores]
             suplentes = participantes.iloc[cant_ganadores:cant_ganadores + cant_suplentes]
 
@@ -228,6 +260,7 @@ if archivo:
 
     except Exception as e:
         st.error(f"❌ Error al leer el archivo: {e}")
+        st.error("Por favor, verifica que el archivo sea un Excel válido.")
 
 # Footer simple en negro
 st.markdown("---")
