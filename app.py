@@ -119,40 +119,60 @@ if archivo:
             st.error("❌ El archivo está vacío.")
             st.stop()
 
-        # Buscar columnas que contengan "dni" y "nombre" (case insensitive)
-        columnas = [str(col).lower().strip() for col in df.columns]
+        # Buscar columnas específicas "DNI" y "Nombre" (exactamente como están en tu archivo)
+        columnas_disponibles = list(df.columns)
         
-        # Encontrar nombres reales de las columnas
+        # Encontrar nombres reales de las columnas (búsqueda exacta primero, luego flexible)
         columna_dni = None
         columna_nombre = None
         
-        for col in df.columns:
-            col_lower = str(col).lower().strip()
-            if 'dni' in col_lower:
+        # Búsqueda exacta primero
+        for col in columnas_disponibles:
+            if str(col).strip() == "DNI":
                 columna_dni = col
-            if 'nombre' in col_lower:
+            if str(col).strip() == "Nombre":
                 columna_nombre = col
+        
+        # Si no se encuentran exactamente, buscar de forma flexible
+        if not columna_dni:
+            for col in columnas_disponibles:
+                if 'dni' in str(col).lower():
+                    columna_dni = col
+                    break
+                    
+        if not columna_nombre:
+            for col in columnas_disponibles:
+                if 'nombre' in str(col).lower():
+                    columna_nombre = col
+                    break
 
         # Validar que se encontraron las columnas necesarias
-        if not columna_dni or not columna_nombre:
-            st.error(f"❌ No se pudieron encontrar las columnas necesarias.")
-            st.error(f"Columnas disponibles: {list(df.columns)}")
-            st.error("El archivo debe tener una columna con 'DNI' y otra con 'Nombre'")
+        if not columna_dni:
+            st.error("❌ No se pudo encontrar la columna 'DNI'")
+            st.error(f"Columnas disponibles: {columnas_disponibles}")
+            st.stop()
+            
+        if not columna_nombre:
+            st.error("❌ No se pudo encontrar la columna 'Nombre'")
+            st.error(f"Columnas disponibles: {columnas_disponibles}")
             st.stop()
 
-        st.success(f"✅ Columnas identificadas: '{columna_dni}' y '{columna_nombre}'")
+        st.success(f"✅ Columna DNI detectada: '{columna_dni}'")
+        st.success(f"✅ Columna Nombre detectada: '{columna_nombre}'")
 
         # Crear un nuevo DataFrame solo con las columnas necesarias
         df_sorteo = df[[columna_dni, columna_nombre]].copy()
         
         # Renombrar columnas para consistencia
-        df_sorteo.columns = ['dni', 'nombre']
+        df_sorteo.columns = ['dni', 'nombre_completo']
         
         # Limpiar datos - eliminar filas con valores vacíos
         df_sorteo = df_sorteo.dropna()
         
         # Convertir DNI a string y limpiar
         df_sorteo['dni'] = df_sorteo['dni'].astype(str).str.strip()
+        # Limpiar nombres
+        df_sorteo['nombre_completo'] = df_sorteo['nombre_completo'].astype(str).str.strip()
 
         # ---- PRE-LIMPIEZA ----
         total_antes = len(df_sorteo)
@@ -239,7 +259,7 @@ if archivo:
                     with col_a:
                         st.metric(f"Ganador {idx}", "🎁")
                     with col_b:
-                        st.markdown(f"<p style='color: #000000;'><strong>Nombre:</strong> {ganador['nombre']}</p>", unsafe_allow_html=True)
+                        st.markdown(f"<p style='color: #000000;'><strong>Nombre completo:</strong> {ganador['nombre_completo']}</p>", unsafe_allow_html=True)
                         st.markdown(f"<p style='color: #000000;'><strong>DNI:</strong> {ganador['dni']}</p>", unsafe_allow_html=True)
                 if idx < len(ganadores):
                     st.write("---")
@@ -249,7 +269,7 @@ if archivo:
             if not suplentes.empty:
                 st.markdown('<div class="suplente-section">', unsafe_allow_html=True)
                 st.markdown("<h3 style='color: #000000;'>🟦 LISTA DE SUPLENTES</h3>", unsafe_allow_html=True)
-                st.table(suplentes)
+                st.table(suplentes[['nombre_completo', 'dni']])
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             st.success("🎊 ¡Sorteo completado exitosamente! 🎊")
