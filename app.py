@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS minimalista
+# CSS minimalista con texto negro
 st.markdown("""
 <style>
     .stApp {
@@ -19,7 +19,7 @@ st.markdown("""
     
     .main-header {
         text-align: center;
-        color: #d63031;
+        color: #000000;
         font-size: 2.5rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
@@ -27,7 +27,7 @@ st.markdown("""
     
     .mingo-header {
         text-align: center;
-        color: #1e3c72;
+        color: #000000;
         font-size: 3rem;
         font-weight: 800;
         margin: 0.5rem 0;
@@ -35,7 +35,7 @@ st.markdown("""
     
     .sub-header {
         text-align: center;
-        color: #2d3436;
+        color: #000000;
         font-size: 1.2rem;
         margin-top: 0;
     }
@@ -68,6 +68,15 @@ st.markdown("""
         border-radius: 10px;
         border-left: 5px solid #0984e3;
     }
+    
+    /* Cambiar color de todos los textos de Streamlit a negro */
+    .stMarkdown, .stHeader, .stSubheader, .stText, .stWrite {
+        color: #000000 !important;
+    }
+    
+    h1, h2, h3, h4, h5, h6, p, div, span {
+        color: #000000 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -77,7 +86,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:  # Columna central para la imagen
     st.image("LOGO_PJ_TERMAS.jpg", width=200, use_column_width=True)
 
-# Títulos
+# Títulos en negro
 st.markdown('<p class="main-header">🎄 Sorteo Solidario por una Navidad Feliz 🎄</p>', unsafe_allow_html=True)
 st.markdown('<p class="mingo-header">MINGO 2026</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Sujeto a las bases y condiciones</p>', unsafe_allow_html=True)
@@ -85,8 +94,8 @@ st.markdown('<p class="sub-header">Sujeto a las bases y condiciones</p>', unsafe
 st.markdown("---")
 
 # ---------------------- CARGA DE ARCHIVO ----------------------
-st.header("📤 Subir archivo Excel")
-st.write("Arrastra y suelta tu archivo Excel aquí")
+st.markdown("<h2 style='color: #000000;'>📤 Subir archivo Excel</h2>", unsafe_allow_html=True)
+st.markdown("<p style='color: #000000;'>Arrastra y suelta tu archivo Excel aquí</p>", unsafe_allow_html=True)
 
 archivo = st.file_uploader(
     "Drag and drop file here",
@@ -124,7 +133,7 @@ if archivo:
         else:
             st.success("✅ No se encontraron DNIs duplicados.")
 
-        st.info(f"🎅 Participantes válidos para el sorteo: **{total_despues}**")
+        st.markdown(f"<p style='color: #000000;'>🎅 Participantes válidos para el sorteo: <strong>{total_despues}</strong></p>", unsafe_allow_html=True)
         
         with st.expander("📋 Ver lista completa de participantes"):
             st.dataframe(df, use_container_width=True)
@@ -156,10 +165,10 @@ if archivo:
             # Contador regresivo con suspenso
             countdown_placeholder = st.empty()
             for i in range(3, 0, -1):
-                countdown_placeholder.markdown(f"<h1 style='text-align: center; color: #d63031;'>🎄 {i} 🎄</h1>", unsafe_allow_html=True)
+                countdown_placeholder.markdown(f"<h1 style='text-align: center; color: #000000;'>🎄 {i} 🎄</h1>", unsafe_allow_html=True)
                 time.sleep(1)
             
-            countdown_placeholder.markdown("<h1 style='text-align: center; color: #d63031;'>🎉 ¡SORTEANDO! 🎉</h1>", unsafe_allow_html=True)
+            countdown_placeholder.markdown("<h1 style='text-align: center; color: #000000;'>🎉 ¡SORTEANDO! 🎉</h1>", unsafe_allow_html=True)
             time.sleep(1)
             
             # Animación de mezcla con progreso
@@ -189,7 +198,7 @@ if archivo:
             
             st.markdown("---")
             st.markdown('<div class="winner-section">', unsafe_allow_html=True)
-            st.subheader("🎉 ¡GANADORES OFICIALES! 🎉")
+            st.markdown("<h3 style='color: #000000;'>🎉 ¡GANADORES OFICIALES! 🎉</h3>", unsafe_allow_html=True)
             
             # Mostrar ganadores uno por uno
             for idx, (_, ganador) in enumerate(ganadores.iterrows(), 1):
@@ -198,15 +207,16 @@ if archivo:
                     with col_a:
                         st.metric(f"Ganador {idx}", "🎁")
                     with col_b:
-                        st.write(f"**Nombre:** {ganador['nombre']}")
-                        st.write(f"**DNI:** {ganador['dni']}")
-                st.write("---")
+                        st.markdown(f"<p style='color: #000000;'><strong>Nombre:</strong> {ganador['nombre']}</p>", unsafe_allow_html=True)
+                        st.markdown(f"<p style='color: #000000;'><strong>DNI:</strong> {ganador['dni']}</p>", unsafe_allow_html=True)
+                if idx < len(ganadores):
+                    st.write("---")
             
             st.markdown('</div>', unsafe_allow_html=True)
 
             if not suplentes.empty:
                 st.markdown('<div class="suplente-section">', unsafe_allow_html=True)
-                st.subheader("🟦 LISTA DE SUPLENTES")
+                st.markdown("<h3 style='color: #000000;'>🟦 LISTA DE SUPLENTES</h3>", unsafe_allow_html=True)
                 st.table(suplentes)
                 st.markdown('</div>', unsafe_allow_html=True)
                 
@@ -219,9 +229,9 @@ if archivo:
     except Exception as e:
         st.error(f"❌ Error al leer el archivo: {e}")
 
-# Footer simple
+# Footer simple en negro
 st.markdown("---")
 st.markdown(
-    "<p style='text-align: center; color: #636e72;'>🎅 ¡Felices Fiestas! 🎄</p>", 
+    "<p style='text-align: center; color: #000000;'>🎅 ¡Felices Fiestas! 🎄</p>", 
     unsafe_allow_html=True
 )
