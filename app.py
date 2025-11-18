@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import random
 import time
+import base64
 
 # Configuración de la página
 st.set_page_config(
@@ -10,75 +11,97 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS minimalista con texto negro
-st.markdown("""
-<style>
-    .stApp {
-        background: white;
-    }
-    
-    .main-header {
-        text-align: center;
-        color: #000000;
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    
-    .mingo-header {
-        text-align: center;
-        color: #000000;
-        font-size: 3rem;
-        font-weight: 800;
-        margin: 0.5rem 0;
-    }
-    
-    .sub-header {
-        text-align: center;
-        color: #000000;
-        font-size: 1.2rem;
-        margin-top: 0;
-    }
-    
-    .stButton button {
-        background-color: #d63031;
-        color: white;
-        border: none;
-        padding: 0.8rem 2rem;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 1.1rem;
-    }
-    
-    .stButton button:hover {
-        background-color: #c23616;
-        color: white;
-    }
-    
-    .winner-section {
-        background-color: #ffeaa7;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 5px solid #d63031;
-    }
-    
-    .suplente-section {
-        background-color: #dfe6e9;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 5px solid #0984e3;
-    }
-    
-    /* Cambiar color de todos los textos de Streamlit a negro */
-    .stMarkdown, .stHeader, .stSubheader, .stText, .stWrite {
-        color: #000000 !important;
-    }
-    
-    h1, h2, h3, h4, h5, h6, p, div, span {
-        color: #000000 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Función para agregar imagen de fondo
+def add_bg_image():
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("FONDO.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }}
+        
+        .main-container {{
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }}
+        
+        .main-header {{
+            text-align: center;
+            color: #000000;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }}
+        
+        .mingo-header {{
+            text-align: center;
+            color: #000000;
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+        }}
+        
+        .sub-header {{
+            text-align: center;
+            color: #000000;
+            font-size: 1.2rem;
+            margin-top: 0;
+        }}
+        
+        .stButton button {{
+            background-color: #d63031;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }}
+        
+        .stButton button:hover {{
+            background-color: #c23616;
+            color: white;
+        }}
+        
+        .winner-section {{
+            background-color: rgba(255, 234, 167, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 5px solid #d63031;
+        }}
+        
+        .suplente-section {{
+            background-color: rgba(223, 230, 233, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 5px solid #0984e3;
+        }}
+        
+        /* Cambiar color de todos los textos a negro */
+        .stMarkdown, .stHeader, .stSubheader, .stText, .stWrite {{
+            color: #000000 !important;
+        }}
+        
+        h1, h2, h3, h4, h5, h6, p, div, span {{
+            color: #000000 !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Agregar la imagen de fondo
+add_bg_image()
+
+# Contenedor principal con fondo semitransparente
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # ---------------------- ENCABEZADO ----------------------
 col1, col2, col3 = st.columns([1, 2, 1])
@@ -228,6 +251,8 @@ if archivo:
 
     except Exception as e:
         st.error(f"❌ Error al leer el archivo: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer simple en negro
 st.markdown("---")
