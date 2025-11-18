@@ -110,18 +110,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Función para crear efecto de nieve
+# Función para crear efecto de nieve (CORREGIDA)
 def add_snow_effect():
-    snowflakes = "❄️" * 50
-    snow_html = f"""
-    <div id="snow-container">
-        {'<div class="snowflake" style="left: {}%; animation-duration: {}s; animation-delay: {}s;">❄️</div>'.format(
-            random.randint(1, 100), 
-            random.uniform(5, 15), 
-            random.uniform(0, 5)
-        ) for _ in range(30)}
-    </div>
-    """
+    snow_html = "<div id='snow-container'>"
+    for _ in range(30):
+        left_pos = random.randint(1, 100)
+        duration = random.uniform(5, 15)
+        delay = random.uniform(0, 5)
+        snow_html += f'<div class="snowflake" style="left: {left_pos}%; animation-duration: {duration}s; animation-delay: {delay}s;">❄️</div>'
+    snow_html += "</div>"
     st.markdown(snow_html, unsafe_allow_html=True)
 
 # Añadir efecto de nieve
