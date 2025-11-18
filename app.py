@@ -10,119 +10,138 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS personalizado para tema navideño con fondo
+# CSS personalizado para tema navideño con fondo mejorado
 st.markdown("""
 <style>
     .stApp {
-        background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
-                          url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
     
     .main-container {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 2px solid #d63031;
+        background-color: rgba(255, 255, 255, 0.98);
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        border: 3px solid #d63031;
+        margin: 2rem auto;
+        max-width: 900px;
     }
     
     .main-header {
         text-align: center;
         color: #d63031;
-        font-size: 2.5rem;
+        font-size: 2.8rem;
         font-weight: bold;
-        margin-bottom: 0;
+        margin-bottom: 0.5rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .mingo-header {
+        text-align: center;
+        color: #1e3c72;
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin: 0.5rem 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
     
     .sub-header {
         text-align: center;
         color: #2d3436;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         margin-top: 0;
+        font-weight: 500;
     }
     
     .stButton button {
         background: linear-gradient(45deg, #d63031, #e17055);
         color: white;
         border: none;
-        padding: 0.8rem 2.5rem;
+        padding: 1rem 3rem;
         border-radius: 25px;
         font-weight: bold;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         transition: all 0.3s ease;
+        margin: 1rem 0;
     }
     
     .stButton button:hover {
         transform: scale(1.05);
-        box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+        box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4);
+    }
+    
+    .upload-section {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 2rem;
+        border-radius: 15px;
+        border: 2px dashed #d63031;
+        margin: 2rem 0;
     }
     
     .winner-section {
         background: linear-gradient(135deg, #ffeaa7, #fab1a0);
-        padding: 1.5rem;
+        padding: 2rem;
         border-radius: 15px;
-        border-left: 8px solid #d63031;
+        border-left: 10px solid #d63031;
         animation: pulse 2s infinite;
+        margin: 1rem 0;
     }
     
     .suplente-section {
         background: linear-gradient(135deg, #dfe6e9, #b2bec3);
-        padding: 1.5rem;
+        padding: 2rem;
         border-radius: 15px;
-        border-left: 8px solid #0984e3;
+        border-left: 10px solid #0984e3;
+        margin: 1rem 0;
     }
     
     .countdown {
-        font-size: 3rem;
+        font-size: 4rem;
         text-align: center;
         color: #d63031;
         font-weight: bold;
         animation: bounce 1s infinite;
+        margin: 2rem 0;
+    }
+    
+    .participant-count {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #1e3c72;
+        text-align: center;
+        margin: 1rem 0;
     }
     
     @keyframes bounce {
         0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+        50% { transform: scale(1.2); }
     }
     
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(214, 48, 49, 0.4); }
-        70% { box-shadow: 0 0 0 15px rgba(214, 48, 49, 0); }
+        70% { box-shadow: 0 0 0 20px rgba(214, 48, 49, 0); }
         100% { box-shadow: 0 0 0 0 rgba(214, 48, 49, 0); }
     }
     
-    .snowflake {
-        position: fixed;
-        top: -10px;
-        color: #74b9ff;
-        font-size: 20px;
-        animation: fall linear forwards;
-        z-index: -1;
+    .file-uploader {
+        background-color: white;
+        border: 2px dashed #d63031 !important;
+        border-radius: 10px;
+        padding: 2rem;
     }
     
-    @keyframes fall {
-        to { transform: translateY(100vh) rotate(360deg); }
+    .footer {
+        text-align: center;
+        color: white;
+        padding: 2rem;
+        margin-top: 2rem;
     }
 </style>
 """, unsafe_allow_html=True)
-
-# Función para crear efecto de nieve (CORREGIDA)
-def add_snow_effect():
-    snow_html = "<div id='snow-container'>"
-    for _ in range(30):
-        left_pos = random.randint(1, 100)
-        duration = random.uniform(5, 15)
-        delay = random.uniform(0, 5)
-        snow_html += f'<div class="snowflake" style="left: {left_pos}%; animation-duration: {duration}s; animation-delay: {delay}s;">❄️</div>'
-    snow_html += "</div>"
-    st.markdown(snow_html, unsafe_allow_html=True)
-
-# Añadir efecto de nieve
-add_snow_effect()
 
 # Contenedor principal
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
@@ -131,21 +150,28 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:  # Columna central para la imagen
-    st.image("LOGO_PJ_TERMAS.jpg", width=200, use_column_width=True)
+    st.image("LOGO_PJ_TERMAS.jpg", width=220, use_column_width=True)
 
-# Título centrado y sin guiones
+# Títulos con mejor jerarquía y MINGO más grande
 st.markdown('<p class="main-header">🎄 Sorteo Solidario por una Navidad Feliz 🎄</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">MINGO 2026</p>', unsafe_allow_html=True)
-st.caption("Sujeto a las bases y condiciones")
+st.markdown('<p class="mingo-header">MINGO 2026</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Sujeto a las bases y condiciones</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# ---------------------- CARGA DE ARCHIVO ----------------------
-st.header("📤 Subir archivo Excel")
+# ---------------------- CARGA DE ARCHIVO MEJORADA ----------------------
+st.markdown("""
+<div style='text-align: center; margin-bottom: 2rem;'>
+    <h2 style='color: #1e3c72;'>📤 Subir archivo Excel</h2>
+    <p style='color: #636e72; font-size: 1.1rem;'>Arrastra y suelta tu archivo Excel aquí</p>
+</div>
+""", unsafe_allow_html=True)
+
 archivo = st.file_uploader(
-    "Arrastra y suelta tu archivo aquí", 
+    " ",
     type=["xlsx"],
-    help="Formatos aceptados: .xlsx (Máximo 200MB)"
+    help="Formatos aceptados: .xlsx (Máximo 200MB)",
+    label_visibility="collapsed"
 )
 
 if archivo:
@@ -177,12 +203,15 @@ if archivo:
         else:
             st.success("✅ No se encontraron DNIs duplicados.")
 
-        st.info(f"🎅 Participantes válidos para el sorteo: **{total_despues}**")
+        st.markdown(f'<div class="participant-count">🎅 Participantes válidos para el sorteo: {total_despues}</div>', unsafe_allow_html=True)
         
-        with st.expander("📋 Ver lista completa de participantes"):
+        with st.expander("📋 Ver lista completa de participantes", expanded=False):
             st.dataframe(df, use_container_width=True)
 
         # Parámetros del sorteo
+        st.markdown("---")
+        st.subheader("🎯 Configuración del Sorteo")
+        
         col1, col2 = st.columns(2)
         
         with col1:
@@ -242,7 +271,7 @@ if archivo:
             
             st.markdown("---")
             st.markdown('<div class="winner-section">', unsafe_allow_html=True)
-            st.subheader("🎉 ¡GANADORES OFICIALES! 🎉")
+            st.markdown('<h2 style="text-align: center; color: #d63031;">🎉 ¡GANADORES OFICIALES! 🎉</h2>', unsafe_allow_html=True)
             
             # Mostrar ganadores uno por uno con animación
             for idx, (_, ganador) in enumerate(ganadores.iterrows(), 1):
@@ -253,7 +282,8 @@ if archivo:
                     with col_b:
                         st.write(f"**Nombre:** {ganador['nombre']}")
                         st.write(f"**DNI:** {ganador['dni']}")
-                st.write("---")
+                if idx < len(ganadores):
+                    st.write("---")
             
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -276,13 +306,10 @@ if archivo:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer navideño mejorado
-st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align: center; color: #636e72; padding: 2rem;'>
-        <h3 style='color: #d63031;'>🎅 ¡Felices Fiestas! 🎄</h3>
-        <p>Que la magia de la Navidad llene sus hogares de alegría y esperanza</p>
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div class="footer">
+    <h3 style='color: white;'>🎅 ¡Felices Fiestas! 🎄</h3>
+    <p style='color: white; font-size: 1.1rem;'>Que la magia de la Navidad llene sus hogares de alegría y esperanza</p>
+    <p style='color: white; font-size: 1rem; margin-top: 1rem;'><strong>MINGO 2026</strong> - Haciendo posible la magia navideña</p>
+</div>
+""", unsafe_allow_html=True)
